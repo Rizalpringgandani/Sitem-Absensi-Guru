@@ -18,6 +18,7 @@ $gaji_per_jam = $query_gaji->fetch_assoc()['setting_nilai'] ?? 0;
 $sql = "SELECT
             g.id_guru,
             g.nama_guru,
+             g.nip,
             (SELECT COUNT(*) 
              FROM absensi a 
              JOIN jadwal_pelajaran j ON a.id_jadwal = j.id_jadwal 
@@ -74,6 +75,7 @@ $result = $stmt->get_result();
         <thead class="bg-gray-800 text-white">
             <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Nama Guru</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">NIP</th>
                 <th class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Jam Utama</th>
                 <th class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Jam Pengganti</th>
                 <th class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Total Jam</th>
@@ -88,6 +90,7 @@ $result = $stmt->get_result();
             ?>
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap font-medium"><?= htmlspecialchars($row['nama_guru']) ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= htmlspecialchars($row['nip'] ?? '-') ?></td>
                     <td class="px-6 py-4 whitespace-nowrap text-center"><?= $row['jam_utama'] ?></td>
                     <td class="px-6 py-4 whitespace-nowrap text-center"><?= $row['jam_pengganti'] ?></td>
                     <td class="px-6 py-4 whitespace-nowrap text-center font-bold text-lg"><?= $total_jam ?></td>
