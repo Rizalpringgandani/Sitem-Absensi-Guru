@@ -15,6 +15,7 @@ $aksi = $_GET['aksi'] ?? '';
 // LOGIKA TAMBAH DATA (Sudah ada, tidak berubah)
 // =================================================================
 if ($aksi === 'tambah') {
+    
     // ... (kode untuk tambah data guru tidak perlu diubah) ...
     $id_guru = $_POST['id_guru'];
     $nama_guru = $_POST['nama_guru'];

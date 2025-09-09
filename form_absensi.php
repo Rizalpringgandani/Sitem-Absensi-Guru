@@ -1,11 +1,9 @@
 <?php
-// Atur judul halaman dinamis
 $page_title = 'Form Absensi Mengajar';
-
-// Panggil header, koneksi, dan cek sesi
 require __DIR__ . '/src/templates/header.php';
 require __DIR__ . '/config/database.php';
 
+// Cek sesi login
 if (!isset($_SESSION['is_logged_in'])) {
     header("Location: index.php");
     exit;
@@ -15,10 +13,10 @@ if (!isset($_GET['id_jadwal'])) {
     exit;
 }
 
-// Ambil data detail jadwal dan daftar guru
 $id_jadwal = $_GET['id_jadwal'];
 $id_guru_login = $_SESSION['id_guru'];
 
+// Ambil data detail jadwal
 $sql_detail = "SELECT j.jam_ke, j.hari, g.nama_guru, m.nama_mapel, k.nama_kelas
                FROM jadwal_pelajaran j
                JOIN guru g ON j.id_guru = g.id_guru
@@ -36,6 +34,7 @@ if (!$detail) {
     exit;
 }
 
+// Ambil daftar guru untuk dropdown pengganti
 $sql_guru = "SELECT id_guru, nama_guru FROM guru WHERE id_guru != ?";
 $stmt_guru = $koneksi->prepare($sql_guru);
 $stmt_guru->bind_param("i", $id_guru_login);
@@ -59,9 +58,15 @@ $result_guru = $stmt_guru->get_result();
             <div class="flex justify-between text-sm"><strong class="text-gray-600 font-medium">Waktu:</strong> <span class="text-gray-900 font-semibold">Hari <?php echo htmlspecialchars($detail['hari']); ?>, Jam ke-<?php echo htmlspecialchars($detail['jam_ke']); ?></span></div>
         </div>
 
-        <form class="space-y-6" action="src/actions/proses_absensi.php" method="POST">
+        <form action="src/actions/proses_absensi.php" method="POST" class="space-y-6">
             <input type="hidden" name="id_jadwal" value="<?php echo $id_jadwal; ?>">
             <input type="hidden" name="tanggal" value="<?php echo date('Y-m-d'); ?>">
+            <input type="hidden" name="latitude" id="latitude">
+            <input type="hidden" name="longitude" id="longitude">
+
+            <div class="text-center p-2 bg-gray-100 rounded-md">
+                <p id="lokasi-status" class="text-sm font-medium text-gray-600 transition-colors duration-300">📍 Mendeteksi lokasi Anda...</p>
+            </div>
 
             <div>
                 <label for="status" class="block text-sm font-medium text-gray-700">Status Kehadiran</label>
@@ -89,7 +94,7 @@ $result_guru = $stmt_guru->get_result();
             </div>
 
             <div>
-                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300">
                     Simpan Absensi
                 </button>
             </div>
@@ -97,12 +102,60 @@ $result_guru = $stmt_guru->get_result();
 
         <div class="text-center">
             <a href="dashboard.php" class="text-sm font-medium text-gray-600 hover:text-blue-500 transition">
-                ← Kembali ke Dashboard
+                &larr; Kembali ke Dashboard
             </a>
         </div>
     </div>
 </div>
 
-<?php
-require __DIR__ . '/src/templates/footer.php';
-?>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const statusElement = document.getElementById('lokasi-status');
+    const latitudeInput = document.getElementById('latitude');
+    const longitudeInput = document.getElementById('longitude');
+    const submitButton = document.querySelector('button[type="submit"]');
+
+    submitButton.disabled = true;
+    submitButton.textContent = 'Menunggu Lokasi...';
+    submitButton.classList.add('bg-gray-400', 'cursor-not-allowed', 'hover:bg-gray-400');
+    submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                latitudeInput.value = position.coords.latitude;
+                longitudeInput.value = position.coords.longitude;
+                statusElement.textContent = '✅ Lokasi berhasil dideteksi.';
+                statusElement.classList.remove('text-gray-600');
+                statusElement.classList.add('text-green-600');
+                
+                submitButton.disabled = false;
+                submitButton.textContent = 'Simpan Absensi';
+                submitButton.classList.remove('bg-gray-400', 'cursor-not-allowed', 'hover:bg-gray-400');
+                submitButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            },
+            function(error) {
+                let errorMessage = 'Gagal mendeteksi lokasi.';
+                if (error.code === error.PERMISSION_DENIED) errorMessage = "Anda tidak mengizinkan akses lokasi.";
+                
+                statusElement.textContent = '⚠️ ' + errorMessage;
+                statusElement.classList.remove('text-gray-600');
+                statusElement.classList.add('text-red-600');
+
+                submitButton.disabled = false;
+                submitButton.textContent = 'Simpan Absensi (Tanpa Lokasi)';
+                submitButton.classList.remove('bg-gray-400', 'cursor-not-allowed', 'hover:bg-gray-400');
+                submitButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+        );
+    } else {
+        statusElement.textContent = "Geolocation tidak didukung browser ini.";
+        submitButton.disabled = false;
+        submitButton.textContent = 'Simpan Absensi';
+        submitButton.classList.remove('bg-gray-400', 'cursor-not-allowed', 'hover:bg-gray-400');
+        submitButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+    }
+});
+</script>
+
+<?php require __DIR__ . '/src/templates/footer.php'; ?>

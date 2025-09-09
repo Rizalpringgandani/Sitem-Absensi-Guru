@@ -26,18 +26,29 @@ $current_uri = $_SERVER['REQUEST_URI'];
         <a href="<?= $base_path ?>kelas/" class="<?= strpos($current_uri, 'kelas') ? 'bg-gray-900' : '' ?> block px-4 py-2 rounded-md hover:bg-gray-700">
             Kelola Kelas
         </a>
-        <a href="<?= $base_path ?>jam/" class="<?= strpos($current_uri, 'jam') ? 'bg-gray-900' : '' ?> block px-4 py-2 rounded-md hover:bg-gray-700">
-            Kelola Jam
+        <a href="<?= $base_path ?>jadwal/" class="<?= strpos($current_uri, 'jadwal') ? 'bg-gray-900' : '' ?> block px-4 py-2 rounded-md hover:bg-gray-700">
+            Kelola Jadwal
         </a>
-        <a href="<?= $base_path ?>pengaturan/" class="<?= strpos($current_uri, 'pengaturan') ? 'bg-gray-900' : '' ?> block px-4 py-2 rounded-md hover:bg-gray-700">
-            Pengaturan Gaji
-        </a>
-        <a href="<?= $base_path ?>rekap/" class="<?= strpos($current_uri, 'rekap/index.php') ? 'bg-gray-900' : '' ?> block px-4 py-2 rounded-md hover:bg-gray-700">
-            Laporan Harian
-        </a>
-        <a href="<?= $base_path ?>rekap/gaji.php" class="<?= strpos($current_uri, 'rekap/gaji.php') ? 'bg-gray-900' : '' ?> block px-4 py-2 rounded-md hover:bg-gray-700">
-            Laporan Gaji
-        </a>
+        
+        <div>
+            <p class="px-4 pt-4 pb-2 text-xs font-semibold text-gray-400 uppercase">Pengaturan</p>
+            <a href="<?= $base_path ?>jam/ "class="<?= strpos($current_uri, 'jam') ? 'bg-gray-900' : '' ?> block px-4 py-2 rounded-md hover:bg-gray-700">
+                Jam Pelajaran
+            </a>
+            <a href="<?= $base_path ?>pengaturan/" class="<?= strpos($current_uri, 'pengaturan') ? 'bg-gray-900' : '' ?> block px-4 py-2 rounded-md hover:bg-gray-700">
+                Gaji Guru
+            </a>
+        </div>
+        
+        <div>
+            <p class="px-4 pt-4 pb-2 text-xs font-semibold text-gray-400 uppercase">Laporan</p>
+            <a href="<?= $base_path ?>rekap/" class="<?= strpos($current_uri, 'rekap/index.php') ? 'bg-gray-900' : '' ?> block px-4 py-2 rounded-md hover:bg-gray-700">
+                Laporan Harian
+            </a>
+            <a href="<?= $base_path ?>rekap/gaji.php" class="<?= strpos($current_uri, 'rekap/gaji.php') ? 'bg-gray-900' : '' ?> block px-4 py-2 rounded-md hover:bg-gray-700">
+                Laporan Gaji
+            </a>
+        </div>
     </nav>
     <div class="px-6 py-4 border-t border-gray-700">
         <a href="<?= $base_path ?>proses_logout.php" class="block text-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">

@@ -1,6 +1,7 @@
 <?php
 $page_title = 'Tambah Data Guru';
 require __DIR__ . '/../templates/header.php'; // Panggil header
+
 ?>
 
 <div class="flex justify-between items-center mb-6">

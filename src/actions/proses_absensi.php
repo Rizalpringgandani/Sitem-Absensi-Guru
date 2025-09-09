@@ -2,6 +2,8 @@
 session_start();
 include __DIR__ . '/../../config/database.php';
 
+
+
 // Cek sesi login
 if (!isset($_SESSION['is_logged_in'])) {
     header("Location: ../../index.php");
@@ -12,6 +14,25 @@ if (!isset($_SESSION['is_logged_in'])) {
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../../dashboard.php");
     exit;
+    $id_jadwal = $_POST['id_jadwal'];
+    // ... (data lain) ...
+    $id_guru_pengganti = !empty($_POST['id_guru_pengganti']) ? $_POST['id_guru_pengganti'] : NULL;
+    
+    // AMBIL DATA LOKASI
+    $latitude = !empty($_POST['latitude']) ? $_POST['latitude'] : NULL;
+    $longitude = !empty($_POST['longitude']) ? $_POST['longitude'] : NULL;
+
+    // ... (kode validasi waktu dan duplikasi absen tidak berubah) ...
+    
+    // Siapkan query INSERT dengan kolom baru
+    $sql_insert = "INSERT INTO absensi (id_jadwal, tanggal, status_kehadiran, id_guru_pengganti, keterangan, latitude, longitude) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?)";
+    
+    $stmt_insert = $koneksi->prepare($sql_insert);
+    
+    // Sesuaikan bind_param: 'd' untuk tipe data double/decimal
+    $stmt_insert->bind_param("isssidd", $id_jadwal, $tanggal, $status_kehadiran, $id_guru_pengganti, $keterangan, $latitude, $longitude);
+    
 }
 
 // Ambil semua data dari form
